@@ -67,13 +67,16 @@ parse_args :: proc(options: ^Options) -> (ok: bool) {
     }
 
     if options.job_count == 0 {
-        options.job_count = num_processors()
+        options.job_count = os.get_processor_core_count()
     }
     return
 }
 
 load_api :: proc(options: Options) -> (api: ^g.Api, ok: bool) {
-    data := os.read_entire_file(options.api_file) or_return
+    data, rerr := os.read_entire_file(options.api_file, context.allocator)
+    if rerr != nil {
+        return
+    }
     defer delete(data)
 
     api = new(g.Api)
@@ -114,6 +117,7 @@ main :: proc() {
     g.graph_relationship_pass(&graph, api)
 
     fmt.printfln("Running Codegen (%v)", api.version.full_name)
+    init_templates()
     generate_bindings(graph, options)
 
     // since we wanna keep state around until the end of the program's lifetime,
