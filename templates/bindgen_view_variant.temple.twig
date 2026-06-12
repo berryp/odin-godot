@@ -88,7 +88,7 @@ new_{{ this.snake_name }} :: proc {
 ) -> (ret: {{ return_type }}) {
     @(static) __ptr: __bindgen_gde.PtrBuiltInMethod
     if __ptr == nil {
-        _gde_name := new_string_name_cstring("{{ method.name }}", true)
+        _gde_name := new_string_name_cstring("{{ method.godot_name }}", true)
         __ptr = __bindgen_gde.variant_get_ptr_builtin_method(.{{ this.name }}, &_gde_name, {{ i64(method.hash) }})
     }
 {% for arg in method.args %}
@@ -110,7 +110,7 @@ new_{{ this.snake_name }} :: proc {
 ) {
     @(static) __ptr: __bindgen_gde.PtrBuiltInMethod
     if __ptr == nil {
-        _gde_name := new_string_name_cstring("{{ method.name }}", true)
+        _gde_name := new_string_name_cstring("{{ method.godot_name }}", true)
         __ptr = __bindgen_gde.variant_get_ptr_builtin_method(.{{ this.name }}, &_gde_name, {{ i64(method.hash) }})
     }
 {% for arg in method.args %}
@@ -136,7 +136,7 @@ new_{{ this.snake_name }} :: proc {
 ) -> (ret: {{ return_type }}) {
     @(static) __ptr: __bindgen_gde.PtrBuiltInMethod
     if __ptr == nil {
-        _gde_name := new_string_name_cstring("{{ method.name }}", true)
+        _gde_name := new_string_name_cstring("{{ method.godot_name }}", true)
         __ptr = __bindgen_gde.variant_get_ptr_builtin_method(.{{ this.name }}, &_gde_name, {{ i64(method.hash) }})
     }
 {% for arg in method.args %}
@@ -159,7 +159,7 @@ new_{{ this.snake_name }} :: proc {
 ) {
     @(static) __ptr: __bindgen_gde.PtrBuiltInMethod
     if __ptr == nil {
-        _gde_name := new_string_name_cstring("{{ method.name }}", true)
+        _gde_name := new_string_name_cstring("{{ method.godot_name }}", true)
         __ptr = __bindgen_gde.variant_get_ptr_builtin_method(.{{ this.name }}, &_gde_name, {{ i64(method.hash) }})
     }
 {% for arg in method.args %}

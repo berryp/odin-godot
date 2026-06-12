@@ -91,7 +91,7 @@ new_{{ this.snake_name }} :: proc "contextless" () -> {{ this.self }} {
         &{{ arg.name }}_,
 {% end %}
     }
-    __bindgen_gde.object_method_bind_ptrcall(__{{ method.name }}_method_ptr, &self, raw_data(args), &ret)
+    __bindgen_gde.object_method_bind_ptrcall(__{{ method.name }}_method_ptr, self, raw_data(args), &ret)
     return
 }
 
@@ -111,7 +111,7 @@ new_{{ this.snake_name }} :: proc "contextless" () -> {{ this.self }} {
         &{{ arg.name }}_,
 {% end %}
     }
-    __bindgen_gde.object_method_bind_ptrcall(__{{ method.name }}_method_ptr, &self, raw_data(args), nil)
+    __bindgen_gde.object_method_bind_ptrcall(__{{ method.name }}_method_ptr, self, raw_data(args), nil)
 }
 
 {% end %}

@@ -22,7 +22,16 @@ godot_allocator_proc :: proc(
         if ptr == nil {
             return nil, .Out_Of_Memory
         }
-        return mem.byte_slice(ptr, size), nil
+        bytes := mem.byte_slice(ptr, size)
+        if mode == .Alloc {
+            // Godot's mem_alloc does not zero. Odin's allocator contract
+            // requires .Alloc to return zeroed memory (.Alloc_Non_Zeroed does
+            // not). Linux fresh mmap pages happen to be zero, but macOS malloc
+            // recycles dirty memory, so the temp arena's new block carries a
+            // garbage `used` and trips `assert(block.used == 0)`.
+            mem.zero_slice(bytes)
+        }
+        return bytes, nil
 
     case .Free:
         mem_free(old_memory)

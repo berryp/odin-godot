@@ -293,6 +293,7 @@ variant :: proc(class: ^g.Builtin_Class, allocator: mem.Allocator) -> (variant: 
         for class_method, method_idx in class.methods {
             method := Method {
                 name        = fmt.aprintf("%v_%v", class.snake_name, class_method.name),
+                godot_name  = strings.clone(class_method.name),
                 hash        = class_method.hash,
                 args        = make([]Method_Arg, len(class_method.args)),
                 vararg      = class_method.vararg,

@@ -35,6 +35,12 @@ Init_Constant :: struct {
 
 Method :: struct {
     name:        string,
+    // Bare Godot method name used for the runtime lookup (string_name passed to
+    // variant_get_ptr_builtin_method). `name` may carry a type prefix baked in
+    // for the proc identifier; `godot_name` must stay the unprefixed Godot name
+    // or the hash lookup fails. Engine classes leave this empty (their `name` is
+    // already the bare Godot name).
+    godot_name:  string,
     vararg:      bool,
     hash:        i64,
     return_type: Maybe(string),
