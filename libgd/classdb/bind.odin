@@ -11,7 +11,9 @@ simple_property_info :: proc "contextless" (type: gdext.Variant_Type, name: ^god
         hint        = 0, // .None
         hint_string = godot.string_empty_ref(),
         class_name  = godot.string_name_empty_ref(),
-        usage       = 0, // .Default
+        // STORAGE | EDITOR. Must be non-zero: Godot 4.6 drops properties without
+        // PROPERTY_USAGE_STORAGE on save (4.5 was lenient), corrupting scenes.
+        usage       = u32(godot.Property_Usage_Flags.Property_Usage_Default),
     }
 }
 
