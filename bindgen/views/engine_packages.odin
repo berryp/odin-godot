@@ -13,8 +13,9 @@ Package_Class :: struct {
 }
 
 Godot_Package :: struct {
-    classes:    []Package_Class,
-    inits:      []string,
+    classes:      []Package_Class,
+    inits:        []string,
+    editor_inits: []string,
     functions:  []Function,
     enums:      []Enum,
     bit_fields: []Bit_Field,
@@ -51,16 +52,26 @@ godot_package :: proc(graph: ^g.Graph, allocator: mem.Allocator) -> (core: Godot
 
     core = Godot_Package {
         classes    = make([]Package_Class, core_class_count),
-        inits      = make([]string, len(graph.engine_classes)),
         functions  = make([]Function, len(graph.util_procs)),
         enums      = make([]Enum, enum_count),
         bit_fields = make([]Bit_Field, len(graph.bit_fields)),
         singletons = make([]Singleton, len(graph.singletons)),
     }
 
+    // Split class inits by API type. Editor classes are only registered in the
+    // editor; resolving their method binds from a game (or headless) context
+    // yields "Parameter mb is null". init() registers core classes; consumers
+    // that need editor classes call init_editor() explicitly.
+    core_inits := make([dynamic]string, 0, len(graph.engine_classes))
+    editor_inits := make([dynamic]string, 0)
+
     class_idx := 0
-    for class, init_idx in graph.engine_classes {
-        core.inits[init_idx] = names.clone_string(class.snake_name)
+    for class in graph.engine_classes {
+        if class.api_type == .Editor {
+            append(&editor_inits, names.clone_string(class.snake_name))
+        } else {
+            append(&core_inits, names.clone_string(class.snake_name))
+        }
 
         if slice.contains(declared_builtins, class.godot_name) {
             continue
@@ -73,6 +84,9 @@ godot_package :: proc(graph: ^g.Graph, allocator: mem.Allocator) -> (core: Godot
         }
         class_idx += 1
     }
+
+    core.inits = core_inits[:]
+    core.editor_inits = editor_inits[:]
 
     for util_proc, proc_idx in graph.util_procs {
         function := Function {

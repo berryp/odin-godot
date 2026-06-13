@@ -46,6 +46,13 @@ engine_class :: proc(class: ^g.Engine_Class, allocator: mem.Allocator) -> (engin
     static_method_count := 0
     instance_method_count := 0
     for method in class.methods {
+        // Virtual methods have no ClassDB method bind — resolving one yields a
+        // null pointer ("Parameter mb is null"). The extension implements
+        // virtuals via the per-class virtual-dispatch callbacks, never calls
+        // them through a bind, so skip them entirely.
+        if method.virtual {
+            continue
+        }
         if method.static {
             static_method_count += 1
         } else {
@@ -128,6 +135,9 @@ engine_class :: proc(class: ^g.Engine_Class, allocator: mem.Allocator) -> (engin
     static_method_idx := 0
     instance_method_idx := 0
     for class_method, method_idx in class.methods {
+        if class_method.virtual {
+            continue
+        }
         method := Method {
             name        = strings.clone(class_method.name),
             hash        = class_method.hash,
